@@ -1,0 +1,11 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+GLOBAL_SUPERSTORE_PATH = os.getenv('GLOBAL_SUPERSTORE_PATH')
+ONLINE_RETAIL2_PATH = os.getenv('ONLINE_RETAIL2_PATH')
+AZURE_TENANT_ID = os.getenv('AZURE_TENANT_ID')
+AZURE_CLIENT_ID = os.getenv('AZURE_CLIENT_ID')
+AZURE_CLIENT_SECRET = os.getenv('AZURE_CLIENT_SECRET')
+STORAGE_ACCOUNT_NAME = os.getenv('STORAGE_ACCOUNT_NAME')
