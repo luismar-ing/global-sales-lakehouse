@@ -5,8 +5,7 @@ LANDING_PATH = "abfss://landing@adlsgsl.dfs.core.windows.net/"
 BRONZE_PATH = "abfss://bronze@adlsgsl.dfs.core.windows.net/"
 
 # Lee un CSV crudo desde landing.
-def read_raw_csv(filename: str, schema: StructType = None):
-
+def read_raw_csv(spark, filename: str, schema: StructType = None):
     path = LANDING_PATH + filename
 
     reader = (
@@ -22,7 +21,6 @@ def read_raw_csv(filename: str, schema: StructType = None):
 
 # Agrega metadata de auditoría antes de escribir a Bronze
 def add_audit_columns(df, filename: str):
-
     return (
         df
         .withColumn("_ingestion_timestamp", F.current_timestamp())
@@ -31,7 +29,6 @@ def add_audit_columns(df, filename: str):
 
 # Escribe el DataFrame como una external Delta table dentro de gsl_databricks.bronze.
 def write_bronze_table(df, table_name: str, location: str):
-
     table_path = location.rstrip("/") + "/" + table_name
 
     (
