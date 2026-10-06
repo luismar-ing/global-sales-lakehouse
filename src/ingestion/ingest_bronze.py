@@ -1,3 +1,5 @@
+from typing import Any
+
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType
 
@@ -10,11 +12,11 @@ def get_source_hash(spark, filename: str) -> str:
     hash_str = spark.read.text(path).first()[0]
     return hash_str
 
-def is_already_ingested(spark, filename: str, table_name: str) -> bool:
+def is_already_ingested(spark, filename: str, table_name: str) -> tuple[bool, str | None]:
     full_table_name = "gsl_databricks.bronze." + table_name
 
     if not spark.catalog.tableExists(full_table_name):
-        return False
+        return False, None
 
     source_hash = get_source_hash(spark, filename)
 
@@ -24,7 +26,7 @@ def is_already_ingested(spark, filename: str, table_name: str) -> bool:
         AND _source_hash = '{source_hash}'
     """).first()[0]
 
-    return count > 0
+    return count > 0, source_hash
 
 # Lee un CSV crudo desde landing.
 def read_raw_csv(spark, filename: str, schema: StructType = None):
@@ -42,9 +44,7 @@ def read_raw_csv(spark, filename: str, schema: StructType = None):
     return reader.load(path)
 
 # Agrega metadata de auditoría antes de escribir a Bronze
-def add_audit_columns(spark, df, filename: str):
-    hash_str = get_source_hash(spark, filename)
-
+def add_audit_columns(df, filename: str, hash_str: str):
     return (
         df
         .withColumn("_ingestion_timestamp", F.current_timestamp())
