@@ -12,13 +12,12 @@ def get_source_hash(spark, filename: str) -> str:
     hash_str = spark.read.text(path).first()[0]
     return hash_str
 
-def is_already_ingested(spark, filename: str, table_name: str) -> tuple[bool, str | None]:
+def is_already_ingested(spark, filename: str, table_name: str) -> tuple[bool, str]:
     full_table_name = "gsl_databricks.bronze." + table_name
+    source_hash = get_source_hash(spark, filename)
 
     if not spark.catalog.tableExists(full_table_name):
-        return False, None
-
-    source_hash = get_source_hash(spark, filename)
+        return False, source_hash
 
     count = spark.sql(f"""
         SELECT COUNT(*) FROM {full_table_name}
