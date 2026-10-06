@@ -1,0 +1,1 @@
+Ingesta a Bronze implementada manualmente con verificación de hash para fines de aprendizaje; el patrón idiomático en Databricks para este problema es Auto Loader (cloudFiles) con checkpoints, que se evaluará como refactor en una iteración posterior.

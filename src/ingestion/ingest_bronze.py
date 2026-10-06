@@ -4,6 +4,27 @@ from pyspark.sql.types import StructType
 LANDING_PATH = "abfss://landing@adlsgsl.dfs.core.windows.net/"
 BRONZE_PATH = "abfss://bronze@adlsgsl.dfs.core.windows.net/"
 
+def get_source_hash(spark, filename: str) -> str:
+    path = LANDING_PATH + filename + ".sha256"
+
+    hash_str = spark.read.text(path).first()[0]
+    return hash_str
+
+def is_already_ingested(spark, filename: str, table_name: str) -> bool:
+    full_table_name = "gsl_databricks.bronze." + table_name
+    source_hash = get_source_hash(spark, filename)
+
+    if not spark.catalog.tableExists(full_table_name):
+        return False
+
+    count = spark.sql(f"""
+        SELECT COUNT(*) FROM {full_table_name}
+        WHERE _source_file = '{filename}'
+        AND _source_hash = '{source_hash}'
+    """).first()[0]
+
+    return count > 0
+
 # Lee un CSV crudo desde landing.
 def read_raw_csv(spark, filename: str, schema: StructType = None):
     path = LANDING_PATH + filename
@@ -20,11 +41,12 @@ def read_raw_csv(spark, filename: str, schema: StructType = None):
     return reader.load(path)
 
 # Agrega metadata de auditoría antes de escribir a Bronze
-def add_audit_columns(df, filename: str):
+def add_audit_columns(df, filename: str, source_hash: str):
     return (
         df
         .withColumn("_ingestion_timestamp", F.current_timestamp())
         .withColumn("_source_file", F.lit(filename))
+        .withColumn("_source_hash", F.lit(source_hash))
     )
 
 # Escribe el DataFrame como una external Delta table dentro de gsl_databricks.bronze.
