@@ -12,10 +12,11 @@ def get_source_hash(spark, filename: str) -> str:
 
 def is_already_ingested(spark, filename: str, table_name: str) -> bool:
     full_table_name = "gsl_databricks.bronze." + table_name
-    source_hash = get_source_hash(spark, filename)
 
     if not spark.catalog.tableExists(full_table_name):
         return False
+
+    source_hash = get_source_hash(spark, filename)
 
     count = spark.sql(f"""
         SELECT COUNT(*) FROM {full_table_name}
@@ -48,7 +49,7 @@ def add_audit_columns(df, filename: str):
         df
         .withColumn("_ingestion_timestamp", F.current_timestamp())
         .withColumn("_source_file", F.lit(filename))
-        .withColumn("_source_hash", hash_str)
+        .withColumn("_source_hash", F.lit(hash_str))
     )
 
 # Escribe el DataFrame como una external Delta table dentro de gsl_databricks.bronze.
