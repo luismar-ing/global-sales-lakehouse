@@ -42,11 +42,13 @@ def read_raw_csv(spark, filename: str, schema: StructType = None):
 
 # Agrega metadata de auditoría antes de escribir a Bronze
 def add_audit_columns(df, filename: str, source_hash: str):
+    hash_str = get_source_hash(spark, source_hash)
+
     return (
         df
         .withColumn("_ingestion_timestamp", F.current_timestamp())
         .withColumn("_source_file", F.lit(filename))
-        .withColumn("_source_hash", F.lit(source_hash))
+        .withColumn("_source_hash", hash_str)
     )
 
 # Escribe el DataFrame como una external Delta table dentro de gsl_databricks.bronze.
