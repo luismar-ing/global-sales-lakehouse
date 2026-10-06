@@ -42,7 +42,7 @@ def read_raw_csv(spark, filename: str, schema: StructType = None):
     return reader.load(path)
 
 # Agrega metadata de auditoría antes de escribir a Bronze
-def add_audit_columns(df, filename: str):
+def add_audit_columns(spark, df, filename: str):
     hash_str = get_source_hash(spark, filename)
 
     return (
