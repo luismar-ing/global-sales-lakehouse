@@ -25,15 +25,17 @@ def compute_sha256(data: bytes) -> str:
 
 def upload_file(
         local_path: Path,
-        filesystem_name: str = "landing"
+        filesystem_name: str = "landing",
 ) -> None:
     client = get_datalake_client()
 
+    # Obtiene container
     filesystem_client = client.get_file_system_client(filesystem_name)
 
     with open(local_path, "rb") as file:
         data = file.read()
 
+    # Obtiene path dentro del container (carpetas)
     file_client = filesystem_client.get_file_client(local_path.name)
     file_client.upload_data(
         data,
@@ -46,6 +48,31 @@ def upload_file(
     hash_file_client = filesystem_client.get_file_client(hash_file_name)
     hash_file_client.upload_data(hash_str.encode(), overwrite=True)
     print(f"Uploaded: {hash_file_name} -> {filesystem_name}/{hash_file_name}")
+
+def upload_api_data(
+        data: bytes,
+        path: str,
+        filesystem_name: str = "landing",
+) -> None:
+    client = get_datalake_client()
+
+    # Obtiene container
+    filesystem_client = client.get_file_system_client(filesystem_name)
+
+    # Obtiene path dentro del container (carpetas)
+    file_client = filesystem_client.get_file_client(str(path))
+    file_client.upload_data(
+        data,
+        overwrite=True
+    )
+    print(f"Uploaded API data: -> {filesystem_name}/{path}")
+
+    hash_str = compute_sha256(data)
+    hash_file_path = path + ".sha256"
+    hash_file_client = filesystem_client.get_file_client(hash_file_path)
+    hash_file_client.upload_data(hash_str.encode(), overwrite=True)
+    print(f"Uploaded API data hashed -> {filesystem_name}/{hash_file_path}")
+
 
 if __name__ == "__main__":
     raw_dir = Path("data/raw")
