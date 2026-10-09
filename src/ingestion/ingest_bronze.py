@@ -1,7 +1,7 @@
 from typing import Any
-
+import json
 from pyspark.sql import functions as F
-from pyspark.sql.types import StructType
+from pyspark.sql.types import (StructType, StructField, StringType, DoubleType)
 
 LANDING_PATH = "abfss://landing@adlsgsl.dfs.core.windows.net/"
 BRONZE_PATH = "abfss://bronze@adlsgsl.dfs.core.windows.net/"
@@ -63,3 +63,46 @@ def write_bronze_table(df, table_name: str, location: str):
         .saveAsTable(f"gsl_databricks.bronze.{table_name}")
     )
 
+def flatten_frankfurter_rates(raw_json_str: str) -> list[tuple]:
+    parsed = json.loads(raw_json_str)
+
+    base_currency = parsed["base"]
+    rows = []
+
+    for date_str, currency_dict in parsed["rates"].items():
+        for currency_code, rate in currency_dict.items():
+            rows.append(
+                (
+                    date_str,
+                    currency_code,
+                    float(rate),
+                    base_currency
+                )
+            )
+    return rows
+
+def read_frankfurter_bronze(spark, filename: str):
+    path = LANDING_PATH + filename
+
+    # Lee el archivo completo como una sola cadena
+    raw_text = spark.sparkContext.wholeTextFiles(path).first()[1]
+
+    rows = flatten_frankfurter_rates(raw_text)
+
+    schema = StructType([
+        StructField("rate_date", StringType(), False),
+        StructField("currency", StringType(), False),
+        StructField("rate", DoubleType(), False),
+        StructField("base_currency", StringType(), False)
+    ])
+
+    return spark.createDataFrame(rows, schema)
+
+def read_rest_countries_bronze(spark, filename: str):
+    path = LANDING_PATH + filename
+
+    return (
+        spark.read
+        .option("multiline", True)
+        .json(path)
+    )
