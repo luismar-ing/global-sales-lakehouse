@@ -85,7 +85,14 @@ def read_frankfurter_bronze(spark, filename: str):
     path = LANDING_PATH + filename
 
     # Lee el archivo completo como una sola cadena
-    raw_text = spark.sparkContext.wholeTextFiles(path).first()[1]
+    raw_row = (
+        spark.read
+        .option("wholetext", True)
+        .text(path)
+        .first()
+    )
+
+    raw_text = raw_row["value"]
 
     rows = flatten_frankfurter_rates(raw_text)
 
