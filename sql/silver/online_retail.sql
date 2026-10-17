@@ -29,8 +29,8 @@ FROM (
             WHEN UPPER(TRIM(StockCode)) IN ('POST', 'DOT', 'C2', 'M', 'D', 'S', 'BANK CHARGES', 'AMAZONFEE', 'CRUK', 'B')
                 THEN 'fee_or_charge'
             WHEN Quantity < 0 AND Invoice NOT LIKE 'C%' THEN 'internal_adjustment'
-            WHEN Invoice LIKE 'C%' AND (StockCode RLIKE '^[0-9]{4,}[A-Za-z]*$' OR StockCode IN ('DCGSSBOY','DCGSSGIRL','PADS','SP1002','47503J')) THEN 'cancellation'
-            WHEN Quantity > 0 AND (StockCode RLIKE '^[0-9]{4,}[A-Za-z]*$' OR StockCode IN ('DCGSSBOY','DCGSSGIRL','PADS','SP1002','47503J')) AND Description IS NOT NULL THEN 'sale'
+            WHEN Invoice LIKE 'C%' AND (StockCode RLIKE '^[0-9]{4,}[A-Za-z]*$' OR StockCode LIKE 'DCGS%' OR StockCode IN ('PADS','SP1002','47503J')) THEN 'cancellation'
+            WHEN Quantity > 0 AND (StockCode RLIKE '^[0-9]{4,}[A-Za-z]*$' OR StockCode LIKE 'DCGS%' OR StockCode IN ('PADS','SP1002','47503J')) AND Description IS NOT NULL THEN 'sale'
             ELSE 'unclassified'
         END AS transaction_type,
         ROW_NUMBER() OVER (PARTITION BY Invoice, StockCode, Description, Quantity, InvoiceDate, Price, Customer_ID ORDER BY _ingestion_timestamp DESC) AS rn
