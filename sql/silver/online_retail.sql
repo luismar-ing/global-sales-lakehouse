@@ -33,24 +33,8 @@ FROM (
             WHEN Quantity > 0 AND (StockCode RLIKE '^[0-9]{4,}[A-Za-z]*$' OR StockCode IN ('DCGSSBOY','DCGSSGIRL','PADS','SP1002','47503J')) AND Description IS NOT NULL THEN 'sale'
             ELSE 'unclassified'
         END AS transaction_type,
-        ROW_NUMBER() OVER (PARTITION BY _source_hash ORDER BY _ingestion_timestamp DESC) AS rn
+        ROW_NUMBER() OVER (PARTITION BY Invoice, StockCode, Description, Quantity, InvoiceDate, Price, Customer_ID ORDER BY _ingestion_timestamp DESC) AS rn
     FROM gsl_databricks.bronze.online_retail
 )
 WHERE rn = 1 AND transaction_type != 'invalid'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
