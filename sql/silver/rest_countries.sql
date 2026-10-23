@@ -7,7 +7,7 @@ SELECT
   NULLIF(codes.alpha_2, '') AS alpha_2,
   NULLIF(codes.alpha_3, '') AS alpha_3,
   region,
-  NULLIF(subregion, ''),
+  NULLIF(subregion, '') as subregion,
   NULLIF(array_join(continents, ', '), '')AS continents,
   NULLIF(array_join(transform(currencies, c -> c.code), ', '), '') as currencies,
   population,
