@@ -1,2 +1,3 @@
 Ingesta a Bronze implementada manualmente con verificación de hash para fines de aprendizaje; el patrón idiomático en Databricks para este problema es Auto Loader (cloudFiles) con checkpoints, que se evaluará como refactor en una iteración posterior.
 Rest Countries API Key se queda en .env sin ser subida a Key Vault aplicando YAGNI.
+En silver.global_superstore Region sola es ambigua (North aparece en EU y LATAM, South en tres mercados), y la dimensión correcta para agrupar es Market_Region.
