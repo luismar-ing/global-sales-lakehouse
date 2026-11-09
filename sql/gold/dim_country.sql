@@ -1,5 +1,5 @@
 SELECT
-    xxhash64(uuid) AS country_key,
+    xxhash64(country_uuid) AS country_key,
     country_name, alpha_2, alpha_3, region, subregion, continents, currencies
 FROM gsl_databricks.silver.rest_countries
 
