@@ -2,6 +2,7 @@ CREATE OR REPLACE TABLE gsl_databricks.silver.rest_countries
 LOCATION 'abfss://silver@adlsgsl.dfs.core.windows.net/rest_countries'
 AS
 SELECT
+  uuid AS country_uuid,
   names.common   AS country_name,
   names.official AS country_official_name,
   NULLIF(codes.alpha_2, '') AS alpha_2,
