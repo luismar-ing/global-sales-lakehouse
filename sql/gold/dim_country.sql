@@ -1,3 +1,6 @@
+CREATE OR REPLACE TABLE gsl_databricks.gold.dim_country
+LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/dim_country'
+AS
 SELECT
     xxhash64(country_uuid) AS country_key,
     country_name, alpha_2, alpha_3, region, subregion, continents, currencies
