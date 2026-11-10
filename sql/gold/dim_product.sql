@@ -56,5 +56,4 @@ SELECT
   NULL AS product_code,
   'Unknown' AS product_name,
   NULL AS category,
-  NU
-  LL AS sub_category
+  NULL AS sub_category
