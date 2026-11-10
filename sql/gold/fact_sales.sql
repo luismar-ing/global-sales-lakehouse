@@ -1,4 +1,5 @@
 CREATE OR REPLACE TABLE gsl_databricks.gold.fact_sales
+CLUSTER BY (date_key)
 LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/fact_sales'
 AS
 WITH retail_lines AS (
