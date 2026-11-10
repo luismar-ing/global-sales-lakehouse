@@ -32,7 +32,10 @@ def read_raw_csv(spark, filename: str, schema: StructType = None):
     path = LANDING_PATH + filename
 
     reader = (
-        spark.read.format("csv").option("header", True)
+        spark.read.format("csv")
+        .option("header", True)
+        .option("escape", '"')
+        .option("mode", "FAILFAST")
     )
 
     if schema is not None:
