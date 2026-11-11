@@ -212,6 +212,19 @@ Cada entrada registra qué se decidió, qué alternativa se descartó y por qué
 
 ---
 
-## Pendientes de registrar
+## Analítica
 
-Agregar aquí las decisiones de orquestación, Auto Loader y dbt conforme se tomen.
+### D51 — Revenue bruto en la serie mensual, neto en los rankings de productos
+- **Contexto:** la factura 581483 (80,995 unidades de `PAPER CRAFT, LITTLE BIRDIE`, 264,290 USD) se canceló el mismo día con la C581484. En el ranking por revenue bruto, ese producto aparecía en el top 5 por una venta que no ocurrió.
+- **Razón:** la serie mensual mide ventas registradas; un ranking de productos debe reflejar lo que efectivamente se vendió, así que resta las cancelaciones.
+
+### D52 — Rankings y crecimiento separados por fuente
+- **Contexto:** Online Retail tiene ~20 veces más líneas y vende a mayoristas, así que dominaba cualquier ranking conjunto. Además, las fuentes cubren años distintos.
+- **Decisión:** `top_products.sql` saca un top 5 por fuente con `QUALIFY`, y `region_growth.sql` calcula el crecimiento con `source_system` en el `PARTITION BY`.
+- **Razón:** comparar entre fuentes mezcla negocios distintos, y la entrada o salida de una fuente se leería como crecimiento o caída.
+
+### D53 — Crecimiento mensual contra el mismo mes del año anterior
+- **Contexto:** Online Retail solo tiene un año calendario completo (2010): 2009 tiene solo diciembre y 2011 termina el 9 de diciembre. El crecimiento anual no tenía con qué comparar.
+- **Alternativas:** crecimiento anual (sin comparaciones válidas en Online Retail); mes contra mes anterior (distorsionado por estacionalidad).
+- **Decisión:** `LAG` particionado por fuente, región y mes, ordenado por año. Se excluye diciembre de 2011 de Online Retail por estar incompleto. El crecimiento solo se calcula si la fila anterior es del año inmediato anterior, para no comparar contra dos años atrás cuando una región no vendió en un mes.
+

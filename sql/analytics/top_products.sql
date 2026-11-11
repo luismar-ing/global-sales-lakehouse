@@ -7,16 +7,14 @@ WITH top_products AS (
     FROM gsl_databricks.gold.fact_sales f
     JOIN gsl_databricks.gold.dim_product dp
         ON dp.product_key = f.product_key
-    WHERE f.transaction_type = 'sale'
-        AND is_zero_price IS FALSE
+    WHERE is_zero_price IS FALSE
         AND f.product_key != -1
     GROUP BY f.source_system, f.product_key, dp.product_name
 )
 SELECT
     *
 FROM top_products
-ORDER BY total_qty DESC
-LIMIT 5;
+QUALIFY ROW_NUMBER() OVER (PARTITION BY source_system ORDER BY total_qty DESC) <= 5;
 
 
 WITH top_revenue AS (
@@ -28,12 +26,11 @@ WITH top_revenue AS (
     FROM gsl_databricks.gold.fact_sales f
     JOIN gsl_databricks.gold.dim_product dp
         ON dp.product_key = f.product_key
-    WHERE f.transaction_type = 'sale'
-        AND f.product_key != -1
+    WHERE f.product_key != -1
     GROUP BY f.source_system, f.product_key, dp.product_name
 )
 SELECT
     *
 FROM top_revenue
-ORDER BY total_revenue DESC
-LIMIT 5;
+QUALIFY ROW_NUMBER() OVER (PARTITION BY source_system ORDER BY total_revenue DESC) <= 5;
+
