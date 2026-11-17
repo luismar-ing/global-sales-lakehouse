@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.gold.dim_product
 LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/dim_product'
 AS

@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.silver.online_retail
 LOCATION 'abfss://silver@adlsgsl.dfs.core.windows.net/online_retail'
 AS

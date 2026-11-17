@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.silver.frankfurter_rates
 LOCATION 'abfss://silver@adlsgsl.dfs.core.windows.net/frankfurter_rates' AS
 SELECT

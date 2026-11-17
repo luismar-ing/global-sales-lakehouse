@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.gold.daily_rates
 LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/daily_rates'
 AS

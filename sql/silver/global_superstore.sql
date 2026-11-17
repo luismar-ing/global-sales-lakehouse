@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.silver.global_superstore
 LOCATION 'abfss://silver@adlsgsl.dfs.core.windows.net/global_superstore'
 AS

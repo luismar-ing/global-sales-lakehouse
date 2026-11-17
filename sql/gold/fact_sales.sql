@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.gold.fact_sales
 CLUSTER BY (date_key)
 LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/fact_sales'
@@ -90,3 +91,7 @@ LEFT JOIN gsl_databricks.gold.dim_product p
        ON l.source_system = p.source_system AND l.product_natural_key = p.natural_key
 LEFT JOIN gsl_databricks.gold.daily_rates r
        ON l.sale_date = r.full_date AND l.currency = r.currency
+
+-- COMMAND ----------
+
+OPTIMIZE gsl_databricks.gold.fact_sales;

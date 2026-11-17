@@ -1,4 +1,7 @@
+-- Databricks notebook source
 CREATE SCHEMA IF NOT EXISTS gsl_databricks.gold;
+
+-- COMMAND ----------
 
 CREATE OR REPLACE TABLE gsl_databricks.gold.dim_date
 LOCATION 'abfss://gold@adlsgsl.dfs.core.windows.net/dim_date'
@@ -16,3 +19,4 @@ SELECT
 FROM (
     SELECT explode(sequence(DATE'2009-12-01', DATE'2014-12-31', INTERVAL 1 DAY)) AS d
 )
+

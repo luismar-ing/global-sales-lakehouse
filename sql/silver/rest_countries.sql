@@ -1,3 +1,4 @@
+-- Databricks notebook source
 CREATE OR REPLACE TABLE gsl_databricks.silver.rest_countries
 LOCATION 'abfss://silver@adlsgsl.dfs.core.windows.net/rest_countries'
 AS
