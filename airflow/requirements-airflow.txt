@@ -1,0 +1,5 @@
+apache-airflow-providers-databricks
+azure-identity
+azure-storage-file-datalake
+requests
+python-dotenv

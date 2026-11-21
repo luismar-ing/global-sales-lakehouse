@@ -1,0 +1,16 @@
+services:
+  airflow:
+    build: .
+    command: standalone
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../.env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+      PYTHONPATH: /opt/airflow/project
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../src:/opt/airflow/project/src
+      - ../data:/opt/airflow/project/data
